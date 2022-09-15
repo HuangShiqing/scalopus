@@ -55,6 +55,13 @@
 // Macro to explicitly emit a start scope, needs to be paired with TRACE_SCOPE_START(name) with the same name.
 #define TRACE_SCOPE_END(name) TRACE_SCOPE_END_NAMED_ID(name, SCALOPUS_TRACKED_TRACE_ID_STRING(name))
 
+// The parameter name can be either a constant or a variable like string.c_str().
+// But this will a little slower than TRACE_SCOPE_START because:
+// 1. the function get id by name is no longer a constexpr
+// 2. change the judgment methods whether the map contains name and id from static varable to map's method exit.
+#define DYNAMIC_TRACE_SCOPE_START(name) DYNAMIC_TRACE_SCOPE_START_NAMED_ID(name, DYNAMIC_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+#define DYNAMIC_TRACE_SCOPE_END(name) DYNAMIC_TRACE_SCOPE_END_NAMED_ID(name, DYNAMIC_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+
 // Macro to set the configuration of this thread's traces for this and any lower scopes; reverts to previous value.
 #define TRACING_CONFIG_THREAD_STATE_RAII(boolean) TRACING_CONFIG_THREAD_PROCESS_STATE_RAII(false, boolean)
 
