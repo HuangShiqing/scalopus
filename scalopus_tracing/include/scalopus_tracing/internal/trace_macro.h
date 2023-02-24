@@ -35,13 +35,14 @@
 #include <scalopus_tracing/internal/marker_tracepoint.h>
 #include <scalopus_tracing/internal/scope_tracepoint.h>
 #include <scalopus_tracing/internal/compile_time_crc.hpp>
+#include <scalopus_tracing/internal/run_time_crc.h>
 
 // Create a unique ID based on the crc32 of the filename and the line number.
 #define SCALOPUS_TRACKED_TRACE_ID_CREATOR() (CRC32_STR(__FILE__) + __LINE__)
 
 // Create a unique ID based on the crc32 of the filename and the provided string.
 #define SCALOPUS_TRACKED_TRACE_ID_STRING(s) (CRC32_STR(__FILE__) + CRC32_STR(s))
-#define DYNAMIC_SCALOPUS_TRACKED_TRACE_ID_STRING(s) (DYNAMIC_CRC32_STR(__FILE__) + DYNAMIC_CRC32_STR(s))
+#define RUNTIME_SCALOPUS_TRACKED_TRACE_ID_STRING(s) (RUNTIME_CRC32_STR(__FILE__) + RUNTIME_CRC32_STR(s))
 
 // Macro that ensures that tracking the map between name and id is only performed once, this is achieved by using a
 // static boolean.
@@ -53,7 +54,7 @@
     scalopus::StaticStringTracker::getInstance().insert(id, name);                                                     \
   }
 
-#define DYNAMIC_TRACE_TRACKED_MAPPING_REGISTER_ONCE(name, id)                                                          \
+#define RUNTIME_TRACE_TRACKED_MAPPING_REGISTER_ONCE(name, id)                                                          \
   if (!scalopus::StaticStringTracker::getInstance().exists(id))                                                        \
   {                                                                                                                    \
     scalopus::StaticStringTracker::getInstance().insert(id, name);                                                     \
@@ -81,14 +82,14 @@
   {                                                                                                                    \
   } while (0)
 
-#define DYNAMIC_TRACE_SCOPE_START_NAMED_ID(name, id)                                                                   \
-  DYNAMIC_TRACE_TRACKED_MAPPING_REGISTER_ONCE(name, id)                                                                \
+#define RUNTIME_TRACE_SCOPE_START_NAMED_ID(name, id)                                                                   \
+  RUNTIME_TRACE_TRACKED_MAPPING_REGISTER_ONCE(name, id)                                                                \
   scalopus::scope_entry(id);                                                                                           \
   do                                                                                                                   \
   {                                                                                                                    \
   } while (0)
 
-#define DYNAMIC_TRACE_SCOPE_END_NAMED_ID(name, id)                                                                     \
+#define RUNTIME_TRACE_SCOPE_END_NAMED_ID(name, id)                                                                     \
   scalopus::scope_exit(id);                                                                                            \
   do                                                                                                                   \
   {                                                                                                                    \

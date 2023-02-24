@@ -10,6 +10,7 @@ add_library(scalopus_scope_tracing SHARED
   src/trace_configuration_raii.cpp
   src/native/tracepoint_collector_native.cpp
   src/native/endpoint_native_trace_sender.cpp
+  src/run_time_crc.cpp
 )
 set_property(TARGET scalopus_scope_tracing PROPERTY POSITION_INDEPENDENT_CODE ON)
 target_include_directories(scalopus_scope_tracing

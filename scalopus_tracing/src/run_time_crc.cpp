@@ -1,43 +1,10 @@
-/*
-  Copyright (c) 2018, Ivor Wanders
-  All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-
-  Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-  Redistributions in binary form must reproduce the above copyright notice, this
-  list of conditions and the following disclaimer in the documentation and/or
-  other materials provided with the distribution.
-
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-#ifndef SCALOPUS_COMPILE_TIME_CRC_H
-#define SCALOPUS_COMPILE_TIME_CRC_H
-
-#include <cstdint>
-#include <type_traits>
-
-// Based on code from Python's crcmod module. Polynomial "crc-32".
-// polynomial: 0x104C11DB7, bit reverse algorithm:
-//  crcmod.Crc(0x104C11DB7, initCrc=0, xorOut=0xFFFFFFFF)
+#include <scalopus_tracing/internal/run_time_crc.h>
 
 namespace scalopus
 {
 namespace crcdetail
 {
-static constexpr const uint32_t table[256] = {
+static const uint32_t table2[256] = {
   0x00000000U, 0x77073096U, 0xEE0E612CU, 0x990951BAU, 0x076DC419U, 0x706AF48FU, 0xE963A535U, 0x9E6495A3U, 0x0EDB8832U,
   0x79DCB8A4U, 0xE0D5E91EU, 0x97D2D988U, 0x09B64C2BU, 0x7EB17CBDU, 0xE7B82D07U, 0x90BF1D91U, 0x1DB71064U, 0x6AB020F2U,
   0xF3B97148U, 0x84BE41DEU, 0x1ADAD47DU, 0x6DDDE4EBU, 0xF4D4B551U, 0x83D385C7U, 0x136C9856U, 0x646BA8C0U, 0xFD62F97AU,
@@ -69,22 +36,29 @@ static constexpr const uint32_t table[256] = {
   0xB40BBE37U, 0xC30C8EA1U, 0x5A05DF1BU, 0x2D02EF8DU
 };
 
-constexpr uint32_t compute(const char* data, uint32_t len, uint32_t crc = 0)
-{
+uint32_t compute2(const char* data, uint32_t crc) {
   crc = crc ^ 0xFFFFFFFFU;
-  for (uint32_t i = 0; i < len; i++)
+  while ((*data) != '\0')
   {
-    crc = table[static_cast<unsigned char>(*data) ^ (crc & 0xFF)] ^ (crc >> 8);
+    crc = table2[static_cast<unsigned char>(*data) ^ (crc & 0xFF)] ^ (crc >> 8);
     data++;
   }
   crc = crc ^ 0xFFFFFFFFU;
   return crc;
 }
+// // BKDR Hash Function
+// uint32_t bkdr_hash(const char* data, uint32_t len) {
+// 	uint32_t seed = 131; // 31 131 1313 13131 131313 etc..
+// 	uint32_t hash = 0;
 
-}  // namespace crcdetail
-}  // namespace scalopus
+//   while((*data)!='\0') {
+//     hash = hash * seed + *(data++);
+//   }
+//   // for (uint32_t i = 0; i < len; i++) {
+//   //   hash = hash * seed + *(data + i);
+//   // }
+// 	return (hash & 0x7FFFFFFF);
+// }
 
-// Macro to be used, guarantees hash is computed at compile time.
-#define CRC32_STR(A) std::integral_constant<uint32_t, scalopus::crcdetail::compute(A, sizeof(A) - 1)>::value
-
-#endif  // SCALOPUS_COMPILE_TIME_CRC_H
+}
+}

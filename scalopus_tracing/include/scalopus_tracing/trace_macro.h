@@ -35,6 +35,7 @@
 #include <scalopus_tracing/internal/trace_configuration_raii.h>
 #include <scalopus_tracing/internal/trace_macro.h>
 #include <scalopus_tracing/internal/compile_time_crc.hpp>
+#include <scalopus_tracing/internal/run_time_crc.h>
 
 /**
  * Public Macros
@@ -59,8 +60,8 @@
 // But this will a little slower than TRACE_SCOPE_START because:
 // 1. the function get id by name is no longer a constexpr
 // 2. change the judgment methods whether the map contains name and id from static varable to map's method exit.
-#define DYNAMIC_TRACE_SCOPE_START(name) DYNAMIC_TRACE_SCOPE_START_NAMED_ID(name, DYNAMIC_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
-#define DYNAMIC_TRACE_SCOPE_END(name) DYNAMIC_TRACE_SCOPE_END_NAMED_ID(name, DYNAMIC_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+#define RUNTIME_TRACE_SCOPE_START(name) RUNTIME_TRACE_SCOPE_START_NAMED_ID(name, RUNTIME_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+#define RUNTIME_TRACE_SCOPE_END(name) RUNTIME_TRACE_SCOPE_END_NAMED_ID(name, RUNTIME_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
 
 // Macro to set the configuration of this thread's traces for this and any lower scopes; reverts to previous value.
 #define TRACING_CONFIG_THREAD_STATE_RAII(boolean) TRACING_CONFIG_THREAD_PROCESS_STATE_RAII(false, boolean)
@@ -79,3 +80,4 @@
 // Macro to set a counter value, just one series called 'count'.
 #define TRACE_COUNT(name, value) TRACE_COUNT_SERIES(name, "", value)
 #endif  // SCALOPUS_TRACING_SCOPE_TRACING_H
+
