@@ -40,10 +40,10 @@ int main(int /* argc */, char** /* argv */)
   TRACE_SCOPE_RAII("main");
   TRACE_SCOPE_RAII("main");
 
-  TRACE_SCOPE_START("zz");
-  TRACE_SCOPE_START("zz");
-  TRACE_SCOPE_END("zz");
-  TRACE_SCOPE_END("zz");
+  TRACE_SCOPE_START("zz",);
+  TRACE_SCOPE_START("zz",);
+  TRACE_SCOPE_END("zz",);
+  TRACE_SCOPE_END("zz",);
 
   TRACING_CONFIG_THREAD_STATE_RAII(true);
   TRACING_CONFIG_THREAD_STATE_RAII(true);
@@ -73,10 +73,10 @@ int main(int /* argc */, char** /* argv */)
     TRACE_SCOPE_RAII("main");
     TRACE_SCOPE_RAII("main");
 
-    TRACE_SCOPE_START("zz");
-    TRACE_SCOPE_START("zz");
-    TRACE_SCOPE_END("zz");
-    TRACE_SCOPE_END("zz");
+    TRACE_SCOPE_START("zz",);
+    TRACE_SCOPE_START("zz",);
+    TRACE_SCOPE_END("zz",);
+    TRACE_SCOPE_END("zz",);
 
     TRACING_CONFIG_THREAD_STATE_RAII(true);
     TRACING_CONFIG_THREAD_STATE_RAII(true);

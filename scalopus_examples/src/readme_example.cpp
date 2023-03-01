@@ -54,12 +54,12 @@ void b()
   // Or handle the start and stop events yourself.
   // Strings at the start and end need to be compile time constant, identical and in the same file.
   // It is recommended to use the RAII tracepoints.
-  TRACE_SCOPE_START("void b()");
+  TRACE_SCOPE_START("void b()",);
   std::cout << " b" << std::endl;
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
   c();
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
-  TRACE_SCOPE_END("void b()");
+  TRACE_SCOPE_END("void b()",);
 }
 
 void a()

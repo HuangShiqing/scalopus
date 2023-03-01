@@ -64,7 +64,7 @@ void b()
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
   c();
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
-  TRACE_SCOPE_END("void b()");
+  TRACE_SCOPE_END("void b()",);
 }
 
 // we will not see this function if arrived here through this_disables_tracepoints_and_calls_a.

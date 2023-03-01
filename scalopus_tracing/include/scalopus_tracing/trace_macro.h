@@ -45,23 +45,53 @@
 
 // Macro to create a tracker RAII tracepoint. The ID is automatically generated with the last part of the filename and
 // the line number.
+// TODO:
 #define TRACE_SCOPE_RAII(name) TRACE_SCOPE_RAII_ID(name, SCALOPUS_TRACKED_TRACE_ID_CREATOR())
 
 // Macro to create a traced RAII tracepoint using __PRETTY_FUNCTION__ as name.
 #define TRACE_PRETTY_FUNCTION() TRACE_SCOPE_RAII_ID(__PRETTY_FUNCTION__, SCALOPUS_TRACKED_TRACE_ID_CREATOR())
 
 // Macro to explicitly emit a start scope, needs to be paired with TRACE_SCOPE_END(name) with the same name.
-#define TRACE_SCOPE_START(name) TRACE_SCOPE_START_NAMED_ID(name, SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+// #define TRACE_SCOPE_START(name) TRACE_SCOPE_START_NAMED_ID(name, SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+#ifdef TRACE_PROFILE
+  #define TRACE_SCOPE_START(name, wait_fun) \
+  wait_fun; \
+  TRACE_SCOPE_START_NAMED_ID(name, SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+#else
+  #define TRACE_SCOPE_START(name, wait_fun) ;
+#endif
 
 // Macro to explicitly emit a start scope, needs to be paired with TRACE_SCOPE_START(name) with the same name.
-#define TRACE_SCOPE_END(name) TRACE_SCOPE_END_NAMED_ID(name, SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+// #define TRACE_SCOPE_END(name) TRACE_SCOPE_END_NAMED_ID(name, SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+#ifdef TRACE_PROFILE
+  #define TRACE_SCOPE_END(name, wait_fun) \
+  TRACE_SCOPE_END_NAMED_ID(name, SCALOPUS_TRACKED_TRACE_ID_STRING(name)); \
+  wait_fun;
+#else
+  #define TRACE_SCOPE_END(name, wait_fun) ;
+#endif
 
 // The parameter name can be either a constant or a variable like string.c_str().
 // But this will a little slower than TRACE_SCOPE_START because:
 // 1. the function get id by name is no longer a constexpr
 // 2. change the judgment methods whether the map contains name and id from static varable to map's method exit.
-#define RUNTIME_TRACE_SCOPE_START(name) RUNTIME_TRACE_SCOPE_START_NAMED_ID(name, RUNTIME_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
-#define RUNTIME_TRACE_SCOPE_END(name) RUNTIME_TRACE_SCOPE_END_NAMED_ID(name, RUNTIME_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+// #define RUNTIME_TRACE_SCOPE_START(name) RUNTIME_TRACE_SCOPE_START_NAMED_ID(name, RUNTIME_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+// #define RUNTIME_TRACE_SCOPE_END(name) RUNTIME_TRACE_SCOPE_END_NAMED_ID(name, RUNTIME_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+#ifdef TRACE_PROFILE
+  #define RUNTIME_TRACE_SCOPE_START(name, wait_fun) \
+  wait_fun; \
+  RUNTIME_TRACE_SCOPE_START_NAMED_ID(name, RUNTIME_SCALOPUS_TRACKED_TRACE_ID_STRING(name))
+#else
+  #define RUNTIME_TRACE_SCOPE_START(name, wait_fun)
+#endif
+
+#ifdef TRACE_PROFILE
+  #define RUNTIME_TRACE_SCOPE_END(name, wait_fun) \
+  RUNTIME_TRACE_SCOPE_END_NAMED_ID(name, RUNTIME_SCALOPUS_TRACKED_TRACE_ID_STRING(name)); \
+  wait_fun;
+#else
+  #define RUNTIME_TRACE_SCOPE_END(name, wait_fun)
+#endif
 
 // Macro to set the configuration of this thread's traces for this and any lower scopes; reverts to previous value.
 #define TRACING_CONFIG_THREAD_STATE_RAII(boolean) TRACING_CONFIG_THREAD_PROCESS_STATE_RAII(false, boolean)
